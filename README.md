@@ -29,6 +29,10 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
+So realworld recomendation systems work based on specific aspects of the songs and how you interact with them or how others interact with them. The main two paths for recomender systems are collaborative filtering where based on other users the system recomends to you and the content based which analyzes the song and recommends. In my case we are using the content based as that's the only data we have. For my recommendation system I want to create one that does smooth transitions and so for the quantitaive data in that csv we are trying to reduce the differences between the consequent songs.
+
+For your smooth-transition idea, the most important song features are the numeric ones: energy, tempo_bpm, valence, danceability, and acousticness. The identity and label fields like id, title, artist, genre, and mood are useful for explanation and filtering, but they are not the main features for measuring transition smoothness.
+
 ---
 
 ## Getting Started
