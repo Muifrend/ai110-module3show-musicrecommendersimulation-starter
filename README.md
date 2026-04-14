@@ -29,9 +29,48 @@ Some prompts to answer:
 
 You can include a simple diagram or bullet list if helpful.
 
-So realworld recomendation systems work based on specific aspects of the songs and how you interact with them or how others interact with them. The main two paths for recomender systems are collaborative filtering where based on other users the system recomends to you and the content based which analyzes the song and recommends. In my case we are using the content based as that's the only data we have. For my recommendation system I want to create one that does smooth transitions and so for the quantitaive data in that csv we are trying to reduce the differences between the consequent songs.
+Real-world recommendation systems often combine user behavior and item attributes. A common distinction is collaborative filtering (learning from similar users) versus content-based filtering (learning from item features). This project uses a content-based approach because the available data is song-level metadata.
 
-For your smooth-transition idea, the most important song features are the numeric ones: energy, tempo_bpm, valence, danceability, and acousticness. The identity and label fields like id, title, artist, genre, and mood are useful for explanation and filtering, but they are not the main features for measuring transition smoothness.
+The main objective of this recommender is smooth transitions across a playlist. To support that goal, the most important features are the numeric audio attributes in the CSV: energy, tempo_bpm, valence, danceability, and acousticness. Identity and label fields such as id, title, artist, genre, and mood are still useful for filtering and explanation, but they are secondary for transition quality.
+
+The UserProfile stores the starting preferences used to pick the first song:
+- favorite_genre
+- favorite_mood
+- target_energy
+- likes_acoustic
+These values define the initial direction of the playlist before the system switches to transition-first selection.
+  
+### Recommendation Goal: Profile Start, Transition-First Sequence
+
+This recommender uses a two-phase goal:
+
+1. The user inputs a profile, and that profile is used to choose the first song.
+2. After the first song, recommendations should prioritize transition quality between consecutive songs.
+
+Transition quality is the main objective for the sequence. The playlist should optimize smooth flow from one song to the next based on numeric audio features (such as energy, tempo_bpm, valence, danceability, and acousticness), even if that means drifting away from the initial profile over time.
+
+This design is intentional: there are no guardrails that force later songs to stay close to the original user profile.
+
+### Data Flow Map 
+
+![Song Recommendation Data Flow](./assets/data_flow.png)
+
+### Finalized Algorithm Recipe
+
+1. Collect user input: favorite_genre, favorite_mood, target_energy, likes_acoustic, and desired K.
+2. Load all songs from the CSV into memory.
+3. Compute a profile-match score for every song using the user input.
+4. Rank songs by profile-match score and select the top song as the first playlist item.
+5. Initialize playlist state: `playlist = [first_song]`, `remaining = all_other_songs`, `last_song = first_song`.
+6. While the playlist has fewer than K songs, compute transition scores from `last_song` to each remaining candidate.
+7. Rank remaining candidates by transition score and pick the highest-scoring next song.
+8. Update state by appending the selected song, removing it from remaining candidates, and setting `last_song` to that song.
+9. Repeat the loop until K songs are selected.
+10. Return the ordered Top K playlist.
+
+### Potential Bias Note
+
+This system may over-prioritize smooth transition quality, which can repeatedly favor songs with similar audio profiles and reduce diversity. It may also under-recommend songs that are strong mood matches but require a larger feature jump from the current track.
 
 ---
 

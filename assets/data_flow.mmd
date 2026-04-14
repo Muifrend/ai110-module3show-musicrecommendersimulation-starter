@@ -1,0 +1,13 @@
+flowchart TD
+    A[Input: User Prefs] --> B[Load songs.csv]
+    B --> C[Phase 1: Profile-Match Score Each Song]
+    C --> D[Rank by Profile Score]
+    D --> E[Pick First Song S1]
+    E --> F[Initialize State: playlist, remaining, last_song]
+    F --> G{Playlist size below K?}
+    G -- Yes --> H[Phase 2: Score Remaining Songs by Transition from last_song]
+    H --> I[Rank Candidates by Transition Score]
+    I --> J[Pick Best Next Song]
+    J --> K[Update State: append, remove, set last_song]
+    K --> G
+    G -- No --> L[Output: Ordered Top K Recommendations]
