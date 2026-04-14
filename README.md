@@ -97,6 +97,10 @@ pip install -r requirements.txt
 python -m src.main
 ```
 
+Example terminal output:
+
+![Terminal Output Example](./assets/terminal_screenshot.png)
+
 ### Running Tests
 
 Run the starter tests with:
